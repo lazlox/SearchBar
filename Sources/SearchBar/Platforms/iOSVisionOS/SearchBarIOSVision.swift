@@ -56,6 +56,7 @@ public struct SearchBar: UIViewRepresentable{
         self._text = text
         self.prompt = prompt
     }
+        
     
     @_documentation(visibility: internal)
     public func makeUIView(context: Context) -> UISearchBar {
@@ -86,6 +87,14 @@ public struct SearchBar: UIViewRepresentable{
         }
         searchBar.searchTextField.returnKeyType = returnKeyType
         searchBar.returnKeyType = returnKeyType
+        searchBar.autocapitalizationType = .none
+        searchBar.autocorrectionType = .no
+        searchBar.enablesReturnKeyAutomatically = false
+        searchBar.returnKeyType = .done
+        searchBar.isTranslucent = true
+        searchBar.backgroundImage = UIImage()
+        searchBar.backgroundColor = .clear
+        searchBar.barTintColor = .clear
         return searchBar
     }
     
