@@ -59,7 +59,7 @@ public struct SearchBar: UIViewRepresentable{
     
     @_documentation(visibility: internal)
     public func makeUIView(context: Context) -> UISearchBar {
-        let searchBar = configStyle()
+        let searchBar = UISearchBar(frame: .zero)
         searchBar.searchBarStyle = .minimal
         searchBar.placeholder = prompt ?? "Search"
         searchBar.delegate = context.coordinator
