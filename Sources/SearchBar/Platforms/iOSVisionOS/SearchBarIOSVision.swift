@@ -65,26 +65,12 @@ public struct SearchBar: UIViewRepresentable{
         searchBar.placeholder = prompt ?? "Search"
         searchBar.delegate = context.coordinator
         searchBar.searchTextField.delegate = context.coordinator
-        if let keyboardType{ searchBar.searchTextField.keyboardType = keyboardType; searchBar.keyboardType = keyboardType }
-        if let autoCapitalizationType{ searchBar.searchTextField.autocapitalizationType = autoCapitalizationType }
-        searchBar.searchTextField.autocorrectionType = autoCorrectionType
-        searchBar.searchTextField.textContentType = textContentType
         if (isUsingCustomFocus && isFocused.wrappedValue){
             searchBar.searchTextField.becomeFirstResponder()
         }else if (isUsingCustomFocus && !isFocused.wrappedValue){
             searchBar.searchTextField.resignFirstResponder()
         }
-        // Add 10pt left padding to the search text field
-        if let iconView{
-            let view = UIHostingController(rootView: iconView).view
-            view?.backgroundColor = .clear
-            searchBar.searchTextField.leftView = view
-        }
-        searchBar.searchTextField.tokens = currentTokens.wrappedValue.map(\.searchToken)
-        searchBar.searchTextField.clearButtonMode = clearButtonDisplayMode.uiTextFieldViewMode
-        if cancelButtonDisplayMode == .always{
-            searchBar.showsCancelButton = true
-        }
+        searchBar.enablesReturnKeyAutomatically = false
         searchBar.searchTextField.returnKeyType = returnKeyType
         searchBar.returnKeyType = returnKeyType
         searchBar.autocapitalizationType = .none
@@ -111,7 +97,7 @@ public struct SearchBar: UIViewRepresentable{
         }else if (isUsingCustomFocus && !isFocused.wrappedValue){
             uiView.searchTextField.resignFirstResponder()
         }
-        let _ = configStyle(view: uiView)
+        let _ = uiView
     }
     
     @_documentation(visibility: internal)
