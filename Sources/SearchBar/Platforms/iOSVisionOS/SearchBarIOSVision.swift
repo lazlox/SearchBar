@@ -223,8 +223,13 @@ public class SearchBarCoordinator: NSObject, UISearchBarDelegate, UISearchTextFi
         if parent.isUsingCustomFocus{
             parent.isFocused.wrappedValue = true
         }
-        if parent.cancelButtonDisplayMode == .whileEditing {
-            searchBar.setShowsCancelButton(true, animated: true)
+        switch parent.cancelButtonDisplayMode {
+            case .always:
+                searchBar.setShowsCancelButton(true, animated: false) 
+            case .whileEditing:
+                searchBar.setShowsCancelButton(true, animated: true)
+            case .never:
+                searchBar.setShowsCancelButton(false, animated: false)
         }
     }
     
