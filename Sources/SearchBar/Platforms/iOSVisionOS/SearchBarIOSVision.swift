@@ -92,10 +92,25 @@ public struct SearchBar: UIViewRepresentable{
         if let changeAction = searchChangeAction{
             changeAction(text)
         }
-        if (isUsingCustomFocus && isFocused.wrappedValue){
-            uiView.searchTextField.becomeFirstResponder()
-        }else if (isUsingCustomFocus && !isFocused.wrappedValue){
-            uiView.searchTextField.resignFirstResponder()
+        if isUsingCustomFocus {
+            // Act only on an actual change of the desired focus state — NOT on every
+            // render. The original code re-asserted becomeFirstResponder()/resignFirstResponder()
+            // on every updateUIView, so any render triggered while the user was dismissing
+            // the keyboard (e.g. a keyboard-frame change) instantly re-grabbed first responder
+            // and the keyboard could not be dismissed.
+            let desired = isFocused.wrappedValue
+            if context.coordinator.lastAppliedFocus != desired {
+                context.coordinator.lastAppliedFocus = desired
+                if desired {
+                    if !uiView.searchTextField.isFirstResponder {
+                        uiView.searchTextField.becomeFirstResponder()
+                    }
+                } else {
+                    if uiView.searchTextField.isFirstResponder {
+                        uiView.searchTextField.resignFirstResponder()
+                    }
+                }
+            }
         }
         let _ = uiView
     }
@@ -194,7 +209,9 @@ public struct SearchBar: UIViewRepresentable{
 @_documentation(visibility: internal)
 public class SearchBarCoordinator: NSObject, UISearchBarDelegate, UISearchTextFieldDelegate{
     let parent: SearchBar
-    
+    /// Last custom-focus value actually applied to the field, so `updateUIView` can act
+    /// on focus transitions only instead of re-asserting first responder every render.
+    var lastAppliedFocus: Bool? = nil
     
     public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if let clearAction = parent.clearButtonAction{
